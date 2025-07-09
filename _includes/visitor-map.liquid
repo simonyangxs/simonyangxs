@@ -1,0 +1,206 @@
+<!-- Visitor Map Widget -->
+<div id="visitor-map-widget" style="
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 300px;
+  height: 250px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  overflow: hidden;
+  transition: all 0.3s ease;
+">
+  <div style="
+    padding: 10px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  ">
+    <span>🌍 Visitor Map</span>
+    <button id="toggle-map" style="
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+      font-size: 16px;
+      padding: 0;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    ">−</button>
+  </div>
+  
+  <div id="map-content" style="height: 200px; position: relative;">
+    <!-- ClustrMaps Widget -->
+    <script type="text/javascript" id="clstr_globe" src="//clustrmaps.com/globe.js?d=YOUR_SITE_ID"></script>
+    
+    <!-- Alternative: Simple visitor counter with country flags -->
+    <div id="visitor-list" style="
+      padding: 10px;
+      max-height: 180px;
+      overflow-y: auto;
+      font-size: 12px;
+    ">
+      <div style="text-align: center; color: #666; margin-bottom: 10px;">
+        <strong>Recent Visitors</strong>
+      </div>
+      <div id="visitor-entries">
+        <!-- Visitors will be populated here -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+#visitor-map-widget.minimized {
+  height: 50px;
+}
+
+#visitor-map-widget.minimized #map-content {
+  display: none;
+}
+
+.visitor-entry {
+  display: flex;
+  align-items: center;
+  padding: 3px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.visitor-entry:last-child {
+  border-bottom: none;
+}
+
+.country-flag {
+  font-size: 16px;
+  margin-right: 8px;
+}
+
+.visitor-info {
+  flex: 1;
+  font-size: 11px;
+  color: #555;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  #visitor-map-widget {
+    width: 250px;
+    bottom: 10px;
+    right: 10px;
+  }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Toggle map visibility
+  const toggleBtn = document.getElementById('toggle-map');
+  const widget = document.getElementById('visitor-map-widget');
+  const mapContent = document.getElementById('map-content');
+  
+  toggleBtn.addEventListener('click', function() {
+    widget.classList.toggle('minimized');
+    toggleBtn.textContent = widget.classList.contains('minimized') ? '+' : '−';
+  });
+  
+  // Get visitor's location and add to list
+  function addVisitor() {
+    fetch('https://ipapi.co/json/')
+      .then(response => response.json())
+      .then(data => {
+        const visitorList = document.getElementById('visitor-entries');
+        const visitorEntry = document.createElement('div');
+        visitorEntry.className = 'visitor-entry';
+        
+        // Get country flag emoji
+        const countryFlag = getCountryFlag(data.country_code);
+        
+        visitorEntry.innerHTML = `
+          <span class="country-flag">${countryFlag}</span>
+          <div class="visitor-info">
+            <div>${data.city || 'Unknown'}, ${data.country_name || 'Unknown'}</div>
+            <div style="color: #888;">${new Date().toLocaleTimeString()}</div>
+          </div>
+        `;
+        
+        // Add to top of list
+        visitorList.insertBefore(visitorEntry, visitorList.firstChild);
+        
+        // Keep only last 10 entries
+        while (visitorList.children.length > 10) {
+          visitorList.removeChild(visitorList.lastChild);
+        }
+        
+        // Save to localStorage
+        saveVisitorData(data);
+      })
+      .catch(error => {
+        console.log('Could not fetch location data:', error);
+      });
+  }
+  
+  // Get country flag emoji
+  function getCountryFlag(countryCode) {
+    const flagMap = {
+      'US': '🇺🇸', 'CN': '🇨🇳', 'GB': '🇬🇧', 'DE': '🇩🇪', 'FR': '🇫🇷',
+      'JP': '🇯🇵', 'KR': '🇰🇷', 'CA': '🇨🇦', 'AU': '🇦🇺', 'IN': '🇮🇳',
+      'RU': '🇷🇺', 'BR': '🇧🇷', 'IT': '🇮🇹', 'ES': '🇪🇸', 'NL': '🇳🇱',
+      'SE': '🇸🇪', 'NO': '🇳🇴', 'CH': '🇨🇭', 'AT': '🇦🇹', 'BE': '🇧🇪',
+      'DK': '🇩🇰', 'FI': '🇫🇮', 'SG': '🇸🇬', 'HK': '🇭🇰', 'TW': '🇹🇼'
+    };
+    return flagMap[countryCode] || '🌍';
+  }
+  
+  // Save visitor data to localStorage
+  function saveVisitorData(data) {
+    const visitors = JSON.parse(localStorage.getItem('siteVisitors') || '[]');
+    visitors.unshift({
+      country: data.country_name,
+      city: data.city,
+      countryCode: data.country_code,
+      timestamp: new Date().toISOString()
+    });
+    
+    // Keep only last 50 visitors
+    localStorage.setItem('siteVisitors', JSON.stringify(visitors.slice(0, 50)));
+  }
+  
+  // Load existing visitor data
+  function loadVisitorData() {
+    const visitors = JSON.parse(localStorage.getItem('siteVisitors') || '[]');
+    const visitorList = document.getElementById('visitor-entries');
+    
+    visitors.slice(0, 10).forEach(visitor => {
+      const visitorEntry = document.createElement('div');
+      visitorEntry.className = 'visitor-entry';
+      
+      const countryFlag = getCountryFlag(visitor.countryCode);
+      const timestamp = new Date(visitor.timestamp);
+      
+      visitorEntry.innerHTML = `
+        <span class="country-flag">${countryFlag}</span>
+        <div class="visitor-info">
+          <div>${visitor.city || 'Unknown'}, ${visitor.country || 'Unknown'}</div>
+          <div style="color: #888;">${timestamp.toLocaleDateString()}</div>
+        </div>
+      `;
+      
+      visitorList.appendChild(visitorEntry);
+    });
+  }
+  
+  // Initialize
+  loadVisitorData();
+  addVisitor();
+});
+</script>

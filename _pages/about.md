@@ -39,9 +39,13 @@ I'm eager to contribute my efforts in the following areas:
 
 Currently, I'm working as a Research Assistant at The Chinese University of Hong Kong, where I have the privilege of conducting cutting-edge research under the supervision of Prof. [Jing Wu](https://www.jingwulab.org/) and Prof. [Yimeng Niu](https://www.tilburguniversity.edu/staff/y-niu). My academic journey has also involved active collaborations with distinguished scholars, including Prof. [Su Wang](https://sites.google.com/site/suwangwebpage/home), Prof. [Suhong Hong](https://sutinghong.site/), Prof. [Ling Zhong](https://www.ling-zhong.com/) and Prof. [Fengnan Gao](https://gaofn.xyz/). These invaluable experiences have greatly enriched my knowledge. 
 
-
-I've even developed a web-based [search tool](https://utdjournalsearch.streamlit.app/) to help accelerate your research by quickly finding related papers in UTD 24 and FT50 journals. 🚀
-
-Beyond my academic pursuits, I'm a huge fan of 🎾[Carlos Alcaraz](https://www.atptour.com/en/players/carlos-alcaraz/a0e2/player-stats?year=all&surface=all) and 🦊[Jannik Sinner](https://www.atptour.com/en/players/jannik-sinner/s0ag/overview).
-
 If you're interested in my research areas or would like to explore potential collaboration opportunities, please don't hesitate to reach out! I'm truly looking forward to connecting with you and creating more possibilities together! 🤝
+
+
+
+Miscellaneous:
+
+- I've developed a free web-based [SEARCH TOOL](https://utdjournalsearch.streamlit.app/) for quickly finding related papers in UTD 24 and FT50 journals. 🚀
+
+- I'm a huge fan of 🎾[Carlos Alcaraz](https://www.atptour.com/en/players/carlos-alcaraz/a0e2/player-stats?year=all&surface=all) and 🦊[Jannik Sinner](https://www.atptour.com/en/players/jannik-sinner/s0ag/overview).
+

@@ -1,0 +1,297 @@
+<!-- Advanced Visitor Map with Real World Map -->
+<div id="advanced-visitor-map" style="
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 350px;
+  height: 300px;
+  background: rgba(255, 255, 255, 0.98);
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+">
+  <div style="
+    padding: 12px 15px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  ">
+    <span>🌍 Live Visitor Map</span>
+    <div>
+      <span id="visitor-count" style="
+        background: rgba(255,255,255,0.2);
+        padding: 2px 8px;
+        border-radius: 10px;
+        font-size: 12px;
+        margin-right: 10px;
+      ">0</span>
+      <button id="toggle-advanced-map" style="
+        background: rgba(255,255,255,0.2);
+        border: none;
+        color: white;
+        cursor: pointer;
+        font-size: 16px;
+        padding: 4px 8px;
+        border-radius: 4px;
+        transition: background 0.2s;
+      ">−</button>
+    </div>
+  </div>
+  
+  <div id="advanced-map-content" style="height: 250px; position: relative;">
+    <!-- World Map Container -->
+    <div id="world-map" style="width: 100%; height: 180px; background: #f8f9fa;"></div>
+    
+    <!-- Visitor Stats -->
+    <div style="
+      padding: 8px 12px;
+      background: #f8f9fa;
+      border-top: 1px solid #e9ecef;
+      font-size: 11px;
+    ">
+      <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+        <span>🎯 Total Visits: <strong id="total-visits">0</strong></span>
+        <span>🌏 Countries: <strong id="country-count">0</strong></span>
+      </div>
+      <div style="display: flex; justify-content: space-between;">
+        <span>🏙️ Cities: <strong id="city-count">0</strong></span>
+        <span>⏱️ Last: <strong id="last-visit">-</strong></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Include Leaflet CSS and JS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<style>
+#advanced-visitor-map.minimized {
+  height: 60px;
+}
+
+#advanced-visitor-map.minimized #advanced-map-content {
+  display: none;
+}
+
+#toggle-advanced-map:hover {
+  background: rgba(255,255,255,0.3) !important;
+}
+
+.visitor-marker {
+  background: #ff4757;
+  border: 2px solid white;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.pulse {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.3); opacity: 0.7; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  #advanced-visitor-map {
+    width: 280px;
+    bottom: 10px;
+    right: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  #advanced-visitor-map {
+    width: calc(100vw - 20px);
+    right: 10px;
+    left: 10px;
+  }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  let map;
+  let markers = [];
+  let visitorData = JSON.parse(localStorage.getItem('advancedVisitorData') || '[]');
+  
+  // Initialize map
+  function initMap() {
+    if (map) return;
+    
+    map = L.map('world-map', {
+      zoomControl: false,
+      scrollWheelZoom: false,
+      doubleClickZoom: false,
+      touchZoom: false,
+      dragging: false
+    }).setView([20, 0], 1);
+    
+    // Add tile layer with a clean style
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      attribution: '',
+      maxZoom: 5
+    }).addTo(map);
+    
+    // Load existing markers
+    loadMarkers();
+  }
+  
+  // Add visitor marker to map
+  function addMarkerToMap(lat, lng, info) {
+    if (!map) return;
+    
+    const marker = L.circleMarker([lat, lng], {
+      radius: 6,
+      fillColor: '#ff4757',
+      color: '#fff',
+      weight: 2,
+      opacity: 1,
+      fillOpacity: 0.8,
+      className: 'pulse'
+    }).addTo(map);
+    
+    marker.bindPopup(`
+      <div style="font-size: 12px; line-height: 1.4;">
+        <strong>${info.city || 'Unknown City'}</strong><br>
+        ${info.country || 'Unknown Country'}<br>
+        <small>${new Date(info.timestamp).toLocaleString()}</small>
+      </div>
+    `);
+    
+    markers.push(marker);
+    
+    // Remove pulse animation after 3 seconds
+    setTimeout(() => {
+      marker.getElement()?.classList.remove('pulse');
+    }, 3000);
+  }
+  
+  // Load markers for existing visitor data
+  function loadMarkers() {
+    visitorData.forEach(visitor => {
+      if (visitor.lat && visitor.lng) {
+        addMarkerToMap(visitor.lat, visitor.lng, visitor);
+      }
+    });
+  }
+  
+  // Get visitor location and add to map
+  function trackVisitor() {
+    fetch('https://ipapi.co/json/')
+      .then(response => response.json())
+      .then(data => {
+        if (data.latitude && data.longitude) {
+          const visitorInfo = {
+            city: data.city,
+            country: data.country_name,
+            countryCode: data.country_code,
+            lat: data.latitude,
+            lng: data.longitude,
+            timestamp: new Date().toISOString(),
+            ip: data.ip
+          };
+          
+          // Check if this is a new unique visitor (different city or recent visit)
+          const isNewVisitor = !visitorData.some(v => 
+            v.city === visitorInfo.city && 
+            v.country === visitorInfo.country &&
+            (new Date().getTime() - new Date(v.timestamp).getTime()) < 3600000 // 1 hour
+          );
+          
+          if (isNewVisitor) {
+            visitorData.unshift(visitorInfo);
+            visitorData = visitorData.slice(0, 100); // Keep last 100 visitors
+            localStorage.setItem('advancedVisitorData', JSON.stringify(visitorData));
+            
+            // Add marker to map
+            addMarkerToMap(visitorInfo.lat, visitorInfo.lng, visitorInfo);
+          }
+          
+          updateStats();
+        }
+      })
+      .catch(error => {
+        console.log('Could not fetch visitor location:', error);
+        // Fallback: add a random marker for demo
+        addDemoMarker();
+      });
+  }
+  
+  // Add demo marker for testing
+  function addDemoMarker() {
+    const demoLocations = [
+      { lat: 40.7128, lng: -74.0060, city: 'New York', country: 'United States' },
+      { lat: 51.5074, lng: -0.1278, city: 'London', country: 'United Kingdom' },
+      { lat: 35.6762, lng: 139.6503, city: 'Tokyo', country: 'Japan' },
+      { lat: 48.8566, lng: 2.3522, city: 'Paris', country: 'France' }
+    ];
+    
+    const randomLocation = demoLocations[Math.floor(Math.random() * demoLocations.length)];
+    const visitorInfo = {
+      ...randomLocation,
+      timestamp: new Date().toISOString(),
+      countryCode: 'XX'
+    };
+    
+    visitorData.unshift(visitorInfo);
+    localStorage.setItem('advancedVisitorData', JSON.stringify(visitorData));
+    addMarkerToMap(randomLocation.lat, randomLocation.lng, visitorInfo);
+    updateStats();
+  }
+  
+  // Update visitor statistics
+  function updateStats() {
+    const totalVisits = visitorData.length;
+    const uniqueCountries = new Set(visitorData.map(v => v.country)).size;
+    const uniqueCities = new Set(visitorData.map(v => `${v.city}, ${v.country}`)).size;
+    const lastVisit = visitorData.length > 0 ? 
+      new Date(visitorData[0].timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : 
+      '-';
+    
+    document.getElementById('visitor-count').textContent = totalVisits;
+    document.getElementById('total-visits').textContent = totalVisits;
+    document.getElementById('country-count').textContent = uniqueCountries;
+    document.getElementById('city-count').textContent = uniqueCities;
+    document.getElementById('last-visit').textContent = lastVisit;
+  }
+  
+  // Toggle map visibility
+  const toggleBtn = document.getElementById('toggle-advanced-map');
+  const widget = document.getElementById('advanced-visitor-map');
+  
+  toggleBtn.addEventListener('click', function() {
+    const isMinimized = widget.classList.toggle('minimized');
+    toggleBtn.textContent = isMinimized ? '+' : '−';
+    
+    if (!isMinimized && !map) {
+      // Initialize map when first expanded
+      setTimeout(initMap, 100);
+    }
+  });
+  
+  // Initialize
+  updateStats();
+  
+  // Track current visitor after a short delay
+  setTimeout(() => {
+    trackVisitor();
+    // Initialize map if widget is not minimized
+    if (!widget.classList.contains('minimized')) {
+      initMap();
+    }
+  }, 1000);
+});
+</script>

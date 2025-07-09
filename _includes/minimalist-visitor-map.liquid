@@ -1,0 +1,237 @@
+<!-- Minimalist Visitor Map - Bottom of Page -->
+<div id="bottom-visitor-map" style="
+  width: 100%;
+  max-width: 800px;
+  margin: 40px auto 20px;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  text-align: center;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+">
+  <!-- Title -->
+  <h4 style="
+    margin: 0 0 15px 0;
+    color: #495057;
+    font-size: 18px;
+    font-weight: 500;
+  ">
+    🌏 Visitor Distribution
+  </h4>
+  
+  <!-- China-centered World Map -->
+  <div id="china-centered-map" style="
+    width: 100%;
+    max-width: 600px;
+    height: 200px;
+    margin: 0 auto 15px;
+    background: linear-gradient(135deg, #e8f4f8 0%, #f0f8ff 100%);
+    border-radius: 6px;
+    position: relative;
+    overflow: hidden;
+  ">
+    <svg width="100%" height="100%" viewBox="0 0 600 200" style="position: absolute; top: 0; left: 0;">
+      <defs>
+        <style>
+          .continent { fill: #90caf9; stroke: #42a5f5; stroke-width: 0.5; opacity: 0.8; }
+          .visitor-point { fill: #ff5722; stroke: white; stroke-width: 1; }
+          .visitor-point.pulse { animation: subtlePulse 3s infinite; }
+          @keyframes subtlePulse {
+            0%, 100% { opacity: 0.8; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+          }
+        </style>
+      </defs>
+      
+      <!-- Simplified world map centered on China -->
+      <!-- Asia (center) -->
+      <path class="continent" d="M250,50 L450,50 L450,150 L250,150 Z" title="Asia"/>
+      <!-- China highlight -->
+      <path class="continent" d="M300,70 L380,70 L380,120 L300,120 Z" style="fill: #4fc3f7;" title="China"/>
+      
+      <!-- Europe (left) -->
+      <path class="continent" d="M180,60 L240,60 L240,130 L180,130 Z" title="Europe"/>
+      
+      <!-- Africa (left-center) -->
+      <path class="continent" d="M200,140 L280,140 L280,190 L200,190 Z" title="Africa"/>
+      
+      <!-- North America (far left) -->
+      <path class="continent" d="M50,40 L150,40 L150,120 L50,120 Z" title="North America"/>
+      
+      <!-- South America (left-bottom) -->
+      <path class="continent" d="M80,130 L140,130 L140,180 L80,180 Z" title="South America"/>
+      
+      <!-- Australia (right-bottom) -->
+      <path class="continent" d="M480,160 L550,160 L550,190 L480,190 Z" title="Australia"/>
+      
+      <!-- Visitor points will be added here -->
+    </svg>
+  </div>
+  
+  <!-- Simple Stats -->
+  <div style="
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    color: #6c757d;
+    font-size: 14px;
+  ">
+    <span>📍 Visitors: <strong id="simple-visitor-count">0</strong></span>
+    <span>🌍 Regions: <strong id="simple-region-count">0</strong></span>
+  </div>
+</div>
+
+<style>
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  #bottom-visitor-map {
+    margin: 20px 10px 10px;
+    padding: 15px;
+  }
+  
+  #china-centered-map {
+    height: 150px;
+  }
+  
+  #bottom-visitor-map h4 {
+    font-size: 16px;
+  }
+  
+  #bottom-visitor-map > div:last-child {
+    flex-direction: column;
+    gap: 10px;
+    font-size: 13px;
+  }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Simplified visitor tracking - only region level
+  let regionData = JSON.parse(localStorage.getItem('regionVisitorData') || '[]');
+  
+  // Region coordinates on the China-centered map
+  const regionCoords = {
+    'Asia': { x: 350, y: 100 },
+    'Europe': { x: 210, y: 95 },
+    'North America': { x: 100, y: 80 },
+    'South America': { x: 110, y: 155 },
+    'Africa': { x: 240, y: 165 },
+    'Oceania': { x: 515, y: 175 },
+    'China': { x: 340, y: 95 }  // Highlight China
+  };
+  
+  // Map countries to regions (simplified)
+  const countryToRegion = {
+    'CN': 'China', 'TW': 'China', 'HK': 'China', 'MO': 'China',
+    'US': 'North America', 'CA': 'North America', 'MX': 'North America',
+    'GB': 'Europe', 'DE': 'Europe', 'FR': 'Europe', 'IT': 'Europe', 'ES': 'Europe', 'RU': 'Europe',
+    'JP': 'Asia', 'KR': 'Asia', 'IN': 'Asia', 'SG': 'Asia', 'TH': 'Asia',
+    'AU': 'Oceania', 'NZ': 'Oceania',
+    'BR': 'South America', 'AR': 'South America', 'CL': 'South America',
+    'ZA': 'Africa', 'EG': 'Africa', 'NG': 'Africa'
+  };
+  
+  // Add visitor point to map
+  function addRegionPoint(region, isNew = false) {
+    const coords = regionCoords[region];
+    if (!coords) return;
+    
+    const svg = document.querySelector('#china-centered-map svg');
+    const point = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    
+    // Add some random offset to avoid overlapping
+    const offsetX = (Math.random() - 0.5) * 40;
+    const offsetY = (Math.random() - 0.5) * 30;
+    
+    point.setAttribute('cx', coords.x + offsetX);
+    point.setAttribute('cy', coords.y + offsetY);
+    point.setAttribute('r', region === 'China' ? '4' : '3');
+    point.setAttribute('class', `visitor-point ${isNew ? 'pulse' : ''}`);
+    point.setAttribute('title', region);
+    
+    svg.appendChild(point);
+    
+    // Remove pulse after animation
+    if (isNew) {
+      setTimeout(() => point.classList.remove('pulse'), 3000);
+    }
+  }
+  
+  // Load existing region data
+  function loadExistingData() {
+    const uniqueRegions = [...new Set(regionData.map(r => r.region))];
+    uniqueRegions.forEach(region => {
+      addRegionPoint(region);
+    });
+  }
+  
+  // Track visitor region (privacy-friendly)
+  function trackVisitorRegion() {
+    fetch('https://ipapi.co/json/')
+      .then(response => response.json())
+      .then(data => {
+        const region = countryToRegion[data.country_code] || 'Other';
+        
+        // Check if this region was visited recently (last 24 hours)
+        const recentVisit = regionData.find(r => 
+          r.region === region && 
+          (Date.now() - new Date(r.timestamp).getTime()) < 86400000
+        );
+        
+        if (!recentVisit) {
+          const regionVisit = {
+            region: region,
+            timestamp: new Date().toISOString()
+          };
+          
+          regionData.unshift(regionVisit);
+          regionData = regionData.slice(0, 20); // Keep last 20 region visits
+          localStorage.setItem('regionVisitorData', JSON.stringify(regionData));
+          
+          addRegionPoint(region, true);
+        }
+        
+        updateStats();
+      })
+      .catch(error => {
+        console.log('Region tracking failed:', error);
+        // Add demo region for testing
+        addDemoRegion();
+      });
+  }
+  
+  // Add demo region for testing
+  function addDemoRegion() {
+    const regions = ['China', 'Asia', 'Europe', 'North America'];
+    const randomRegion = regions[Math.floor(Math.random() * regions.length)];
+    
+    const regionVisit = {
+      region: randomRegion,
+      timestamp: new Date().toISOString()
+    };
+    
+    regionData.unshift(regionVisit);
+    localStorage.setItem('regionVisitorData', JSON.stringify(regionData));
+    
+    addRegionPoint(randomRegion, true);
+    updateStats();
+  }
+  
+  // Update simple statistics
+  function updateStats() {
+    const totalVisitors = regionData.length;
+    const uniqueRegions = new Set(regionData.map(r => r.region)).size;
+    
+    document.getElementById('simple-visitor-count').textContent = totalVisitors;
+    document.getElementById('simple-region-count').textContent = uniqueRegions;
+  }
+  
+  // Initialize
+  loadExistingData();
+  updateStats();
+  
+  // Track current visitor after delay
+  setTimeout(trackVisitorRegion, 2000);
+});
+</script>

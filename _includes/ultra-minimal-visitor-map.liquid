@@ -1,0 +1,211 @@
+<!-- Ultra Minimalist Visitor Map - Small Corner Widget -->
+<div id="corner-visitor-map" style="
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 200px;
+  height: 120px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  overflow: hidden;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+">
+  <!-- Simple Title -->
+  <div style="
+    padding: 8px 12px;
+    background: #f8f9fa;
+    color: #6c757d;
+    font-size: 12px;
+    font-weight: 500;
+    border-bottom: 1px solid #e9ecef;
+    text-align: center;
+  ">
+    🌍 Visitors
+  </div>
+  
+  <!-- Real World Map -->
+  <div id="real-world-map" style="
+    width: 100%;
+    height: 85px;
+    background: #f0f8ff;
+    position: relative;
+    overflow: hidden;
+  ">
+    <svg width="100%" height="100%" viewBox="0 0 400 170" style="position: absolute; top: 0; left: 0;">
+      <defs>
+        <style>
+          .continent { fill: #b0bec5; stroke: #90a4ae; stroke-width: 0.3; }
+          .china { fill: #81c784; stroke: #66bb6a; stroke-width: 0.5; }
+          .visitor-dot { fill: #f44336; stroke: white; stroke-width: 1; r: 2; }
+          .visitor-dot.new { animation: gentlePulse 2s ease-in-out; }
+          @keyframes gentlePulse {
+            0%, 100% { opacity: 0.8; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.3); }
+          }
+        </style>
+      </defs>
+      
+      <!-- Real world map outlines (simplified but recognizable) -->
+      
+      <!-- North America -->
+      <path class="continent" d="M20,30 L30,25 L45,20 L65,25 L80,30 L85,45 L75,60 L65,65 L50,70 L35,65 L25,50 Z" title="North America"/>
+      
+      <!-- South America -->
+      <path class="continent" d="M60,80 L70,75 L75,85 L80,100 L75,120 L70,135 L65,140 L60,135 L55,120 L50,100 L55,85 Z" title="South America"/>
+      
+      <!-- Europe -->
+      <path class="continent" d="M180,35 L195,30 L210,35 L215,45 L210,55 L195,60 L185,55 L175,45 Z" title="Europe"/>
+      
+      <!-- Africa -->
+      <path class="continent" d="M170,70 L185,65 L200,70 L205,85 L200,105 L195,125 L185,135 L175,130 L165,115 L165,85 Z" title="Africa"/>
+      
+      <!-- Asia (excluding China) -->
+      <path class="continent" d="M220,25 L280,20 L320,25 L340,35 L350,50 L340,70 L320,80 L280,75 L240,70 L220,55 Z" title="Asia"/>
+      
+      <!-- China (highlighted) -->
+      <path class="china" d="M260,45 L290,40 L310,45 L315,60 L305,70 L285,75 L265,70 L255,60 Z" title="China"/>
+      
+      <!-- Australia -->
+      <path class="continent" d="M310,120 L335,115 L350,120 L355,130 L350,140 L335,145 L315,140 L305,130 Z" title="Australia"/>
+      
+      <!-- Russia (northern part) -->
+      <path class="continent" d="M200,15 L300,10 L380,15 L385,25 L300,30 L200,25 Z" title="Russia"/>
+      
+      <!-- Visitor dots will be added here dynamically -->
+    </svg>
+  </div>
+</div>
+
+<style>
+/* Mobile - hide on small screens */
+@media (max-width: 768px) {
+  #corner-visitor-map {
+    width: 160px;
+    height: 100px;
+    bottom: 10px;
+    right: 10px;
+  }
+  
+  #corner-visitor-map > div:first-child {
+    font-size: 11px;
+    padding: 6px 8px;
+  }
+  
+  #real-world-map {
+    height: 70px;
+  }
+}
+
+@media (max-width: 480px) {
+  #corner-visitor-map {
+    display: none; /* Hide on very small screens */
+  }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Simplified region tracking without any numbers display
+  let regionVisits = JSON.parse(localStorage.getItem('minimalRegionData') || '[]');
+  
+  // Coordinates for different regions on the real world map
+  const regionCoords = {
+    'North America': { x: 55, y: 45 },
+    'South America': { x: 65, y: 105 },
+    'Europe': { x: 195, y: 45 },
+    'Africa': { x: 185, y: 100 },
+    'Asia': { x: 280, y: 50 },
+    'China': { x: 285, y: 57 },
+    'Russia': { x: 290, y: 20 },
+    'Australia': { x: 330, y: 130 }
+  };
+  
+  // Country to region mapping
+  const countryToRegion = {
+    'CN': 'China', 'TW': 'China', 'HK': 'China', 'MO': 'China',
+    'US': 'North America', 'CA': 'North America', 'MX': 'North America',
+    'GB': 'Europe', 'DE': 'Europe', 'FR': 'Europe', 'IT': 'Europe', 'ES': 'Europe', 'NL': 'Europe', 'SE': 'Europe',
+    'RU': 'Russia', 'BY': 'Russia', 'KZ': 'Russia',
+    'JP': 'Asia', 'KR': 'Asia', 'IN': 'Asia', 'SG': 'Asia', 'TH': 'Asia', 'VN': 'Asia',
+    'AU': 'Australia', 'NZ': 'Australia',
+    'BR': 'South America', 'AR': 'South America', 'CL': 'South America', 'CO': 'South America',
+    'ZA': 'Africa', 'EG': 'Africa', 'NG': 'Africa', 'KE': 'Africa'
+  };
+  
+  // Add visitor dot to map
+  function addRegionDot(region, isNew = false) {
+    const coords = regionCoords[region];
+    if (!coords) return;
+    
+    const svg = document.querySelector('#real-world-map svg');
+    const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    
+    // Add small random offset to prevent overlapping
+    const offsetX = (Math.random() - 0.5) * 15;
+    const offsetY = (Math.random() - 0.5) * 10;
+    
+    dot.setAttribute('cx', coords.x + offsetX);
+    dot.setAttribute('cy', coords.y + offsetY);
+    dot.setAttribute('class', `visitor-dot ${isNew ? 'new' : ''}`);
+    dot.setAttribute('title', region);
+    
+    svg.appendChild(dot);
+    
+    // Remove animation class after effect
+    if (isNew) {
+      setTimeout(() => dot.classList.remove('new'), 2000);
+    }
+  }
+  
+  // Load existing region dots
+  function loadExistingDots() {
+    const uniqueRegions = [...new Set(regionVisits.map(r => r.region))];
+    uniqueRegions.forEach(region => {
+      addRegionDot(region);
+    });
+  }
+  
+  // Track new visitor region
+  function trackVisitorRegion() {
+    fetch('https://ipapi.co/json/')
+      .then(response => response.json())
+      .then(data => {
+        const region = countryToRegion[data.country_code] || 'Other';
+        
+        if (region !== 'Other') {
+          // Check if this region was visited in last 6 hours
+          const recentVisit = regionVisits.find(r => 
+            r.region === region && 
+            (Date.now() - new Date(r.timestamp).getTime()) < 21600000 // 6 hours
+          );
+          
+          if (!recentVisit) {
+            const regionVisit = {
+              region: region,
+              timestamp: new Date().toISOString()
+            };
+            
+            regionVisits.unshift(regionVisit);
+            regionVisits = regionVisits.slice(0, 15); // Keep last 15
+            localStorage.setItem('minimalRegionData', JSON.stringify(regionVisits));
+            
+            addRegionDot(region, true);
+          }
+        }
+      })
+      .catch(error => {
+        // Silently fail - no demo data, just clean experience
+        console.log('Location detection unavailable');
+      });
+  }
+  
+  // Initialize
+  loadExistingDots();
+  
+  // Track current visitor after delay
+  setTimeout(trackVisitorRegion, 3000);
+});
+</script>
