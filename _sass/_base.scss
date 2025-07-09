@@ -217,12 +217,43 @@ ul.task-list input[type="checkbox"] {
 
 @media (min-width: 576px) {
   .profile {
-    width: 30%;
+    width: 25%; // 从30%减小到25%
 
     .address {
       p {
         display: block;
       }
+    }
+  }
+}
+
+// Profile image hover effect
+.profile-image-container {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+
+  .profile-image-default,
+  .profile-image-hover {
+    transition: opacity 0.3s ease-in-out;
+    width: 100%;
+    height: auto;
+  }
+
+  .profile-image-hover {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+  }
+
+  &:hover {
+    .profile-image-default {
+      opacity: 0;
+    }
+
+    .profile-image-hover {
+      opacity: 1;
     }
   }
 }
@@ -438,6 +469,50 @@ ul.task-list input[type="checkbox"] {
 
   .contact-note {
     font-size: 0.8rem;
+  }
+}
+
+// Small social icons for profile section
+.profile-social {
+  text-align: center;
+  margin-top: 1rem;
+
+  .contact-icons-small {
+    font-size: 2rem;
+
+    a {
+      margin: 0 0.3rem;
+
+      img {
+        width: 1.2rem;
+        height: 1.2rem;
+        margin-bottom: 0.3rem;
+      }
+
+      svg {
+        width: 1.3rem;
+        height: 1.5rem;
+        margin-bottom: 0.2rem;
+
+        image {
+          width: 1.3rem;
+          height: 1.3rem;
+        }
+      }
+
+      i::before {
+        color: var(--global-text-color);
+        transition-property: all 0.2s ease-in-out;
+      }
+
+      &:hover {
+        text-decoration: none;
+
+        i::before {
+          color: var(--global-theme-color);
+        }
+      }
+    }
   }
 }
 

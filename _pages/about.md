@@ -1,34 +1,47 @@
 ---
 layout: about
-title: about
+title: About
 permalink: /
-subtitle: <a href='#'>Affiliations</a>. Address. Contacts. Motto. Etc.
+# subtitle: <a href='#'>Chinese University of Hong Kong</a>. 
 
 profile:
   align: right
-  image: prof_pic.jpg
+  image: dot_pixel.png 
+  image_hover: prof_pic_color.jpg  # hover时显示的图片
   image_circular: false # crops the image to make it circular
-  more_info: >
-    <p>555 your office number</p>
-    <p>123 your address street</p>
-    <p>Your City, State 12345</p>
+  # more_info: >
+  #   <p>555 your office number</p>
+  #   <p>123 your address street</p>
+  #   <p>Your City, State 12345</p>
 
-selected_papers: true # includes a list of papers marked as "selected={true}"
+selected_papers: false # includes a list of papers marked as "selected={true}"
 social: true # includes social icons at the bottom of the page
 
 announcements:
-  enabled: true # includes a list of news items
-  scrollable: true # adds a vertical scroll bar if there are more than 3 news items
+  enabled: false # includes a list of news items
+  scrollable: false # adds a vertical scroll bar if there are more than 3 news items
   limit: 5 # leave blank to include all the news in the `_news` folder
 
 latest_posts:
-  enabled: true
-  scrollable: true # adds a vertical scroll bar if there are more than 3 new posts items
+  enabled: false
+  scrollable: false # adds a vertical scroll bar if there are more than 3 new posts items
   limit: 3 # leave blank to include all the blog posts
 ---
 
-Write your biography here. Tell the world about yourself. Link to your favorite [subreddit](http://reddit.com). You can put a picture in, too. The code is already in, just name your picture `prof_pic.jpg` and put it in the `img/` folder.
+Welcome to my page! I'm thrilled to have you here, sending you my warmest and most heartfelt greetings! 👋
 
-Put your address / P.O. box / other info right below your picture. You can also disable any of these elements by editing `profile` property of the YAML header of your `_pages/about.md`. Edit `_bibliography/papers.bib` and Jekyll will render your [publications page](/al-folio/publications/) automatically.
+I'm Xingsheng Yang (杨兴胜), an explorer with an immense passion for Operations Management and Data Science. I hold an MSc in Computer Science from ShanghaiTech University (2024 cohort), and dual Bachelor's degrees in Computer Science and Financial Engineering from Sichuan University. I'm excited to soon begin my Ph.D. in Data Science at City University of Hong Kong (CityU)! 🎓
 
-Link to your social media connections, too. This theme is set up to use [Font Awesome icons](https://fontawesome.com/) and [Academicons](https://jpswalsh.github.io/academicons/), like the ones below. Add your Facebook, Twitter, LinkedIn, Google Scholar, or just disable all of them.
+I'm eager to contribute my efforts in the following areas:
+1. Innovation in Global Supply Chains. 🌍
+2. Text Mining-Driven Operations Management - Finance Interface. 📊
+3. Science of Science & Scientometrics. 🔬
+
+Currently, I'm working as a Research Assistant at The Chinese University of Hong Kong, where I have the privilege of conducting cutting-edge research under the supervision of Prof. [Jing Wu](https://www.jingwulab.org/) and Prof. [Yimeng Niu](https://www.tilburguniversity.edu/staff/y-niu). My academic journey has also involved active collaborations with distinguished scholars, including Prof. [Su Wang](https://sites.google.com/site/suwangwebpage/home), Prof. [Suhong Hong](https://sutinghong.site/), Prof. [Ling Zhong](https://www.ling-zhong.com/) and Prof. [Fengnan Gao](https://gaofn.xyz/). These invaluable experiences have greatly enriched my knowledge. 
+
+
+I've even developed a web-based [search tool](https://utdjournalsearch.streamlit.app/) to help accelerate your research by quickly finding related papers in UTD 24 and FT50 journals. 🚀
+
+Beyond my academic pursuits, I'm a huge fan of 🎾[Carlos Alcaraz](https://www.atptour.com/en/players/carlos-alcaraz/a0e2/player-stats?year=all&surface=all) and 🦊[Jannik Sinner](https://www.atptour.com/en/players/jannik-sinner/s0ag/overview).
+
+If you're interested in my research areas or would like to explore potential collaboration opportunities, please don't hesitate to reach out! I'm truly looking forward to connecting with you and creating more possibilities together! 🤝
