@@ -36,13 +36,9 @@ visitor_map:
   # Privacy settings (enhanced)
   privacy:
     no_ip_storage: true           # Never store IP addresses
+    store_ip_addresses: false     # Don't store actual IP addresses
     region_level_only: true       # Only track continent/region level
     no_city_data: true            # Don't show or store city information
-    no_timestamps_display: false # Don't display visit times
-    respect_do_not_track: true    # Respect browser's do-not-track setting
-    
-  # Privacy settings
-  privacy:
-    store_ip_addresses: false     # Don't store actual IP addresses
     anonymize_location: false     # Show exact city or anonymize to country level
+    no_timestamps_display: false # Don't display visit times
     respect_do_not_track: true    # Respect browser's do-not-track setting
