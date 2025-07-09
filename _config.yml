@@ -641,3 +641,12 @@ jsonresume:
   - languages
   - interests
   - references
+
+# -----------------------------------------------------------------------------
+# Analytics
+# -----------------------------------------------------------------------------
+
+# Google Analytics 4 (免费版)
+# 在 https://analytics.google.com/ 创建账户后，将获得的 Measurement ID 填入下方
+# 格式类似: G-0MBKEVYMNH
+google_analytics_id: G-0MBKEVYMNH # 在此填入您的 GA4 Measurement ID
