@@ -49,3 +49,5 @@ Miscellaneous:
 
 - I'm a huge fan of 🎾[Carlos Alcaraz](https://www.atptour.com/en/players/carlos-alcaraz/a0e2/player-stats?year=all&surface=all) and 🦊[Jannik Sinner](https://www.atptour.com/en/players/jannik-sinner/s0ag/overview).
 
+- I love R&B music, especially works by [Khalil Fong](https://music.apple.com/us/artist/khalil-fong/201549024), [David Tao](https://music.apple.com/us/artist/david-tao/16789930), and [Tia Ray](https://music.apple.com/us/artist/tia-ray/638018821). 🎵
+

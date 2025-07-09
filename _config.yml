@@ -16,10 +16,10 @@ description: > # the ">" symbol means to ignore newlines until "footer_text:"
 #   Photos from <a href="https://unsplash.com" target="_blank">Unsplash</a>.
 keywords: Xingsheng Yang, Personal Website # add your own keywords or leave empty
 lang: en # the language of your site (for example: en, fr, cn, ru, etc.)
-icon: ⚛️ # the emoji used as the favicon (alternatively, provide image name in /assets/img/)
+icon: datong.jpg # the emoji used as the favicon (alternatively, provide image name in /assets/img/)
 
 url: https://simonyangxs.github.io # the base hostname & protocol for your site
-baseurl: /al-folio # the subpath of your site, e.g. /blog/. Leave blank for root
+baseurl:  # the subpath of your site, e.g. /blog/. Leave blank for root
 last_updated: false # set to true if you want to display last updated in the footer
 impressum_path: # set to path to include impressum link in the footer, use the same path as permalink in a page, helps to conform with EU GDPR
 back_to_top: true # set to false to disable the back to top button
@@ -86,17 +86,17 @@ bing_site_verification: # out your bing-site-verification ID (Bing Webmaster)
 # Blog
 # -----------------------------------------------------------------------------
 
-blog_name: al-folio # blog_name will be displayed in your blog page
-blog_description: a simple whitespace theme for academics
+blog_name: # disabled - using external blog
+blog_description: # disabled - using external blog
 permalink: /blog/:year/:title/
 lsi: false # produce an index for related posts
 
 # Pagination
 pagination:
-  enabled: true
+  enabled: false # disabled for external blog
 
 related_blog_posts:
-  enabled: true
+  enabled: false # disabled for external blog
   max_related: 5
 
 # Giscus comments (RECOMMENDED)
@@ -255,8 +255,8 @@ jekyll-archives:
   books:
     enabled: [year, tags, categories] # enables year, tag and category archives (remove if you need to disable one of them).
 
-display_tags: ["formatting", "images", "links", "math", "code", "blockquotes"] # these tags will be displayed on the front page of your blog
-display_categories: ["external-services"] # these categories will be displayed on the front page of your blog
+display_tags: [] # disabled - using external blog
+display_categories: [] # disabled - using external blog
 
 # -----------------------------------------------------------------------------
 # Jekyll Scholar
